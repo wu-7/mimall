@@ -1,28 +1,32 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import {getUserInfo} from 'network/request.js'
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  mounted() {
+    if(this.$cookies.get('userId')){
+      this._getUserInfo()
+    }
+  },
+  methods: {
+    async _getUserInfo() {
+      const data = await getUserInfo()
+      if(data){
+        this.$store.dispatch('saveUserName',data.username)
+        this.$store.dispatch('saveCartCnt',data.cartCnt)
+      }else{
+        this.$cookies.remove('userId')
+      }
+    }
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="less" scoped>
+
 </style>
